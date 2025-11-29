@@ -1,0 +1,924 @@
+{
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "R-DEFICIT-01",
+      "bucket": "budget_stability",
+      "name": "Current Month Deficit",
+      "enabled": true,
+      "priority": 1,
+      "weight": 2.0,
+      "condition": {
+        "type": "comparison",
+        "left": "current_month_expense",
+        "operator": ">",
+        "right": "current_month_income"
+      },
+      "severity": {
+        "type": "banded",
+        "metric": "(current_month_expense - current_month_income) / current_month_income",
+        "bands": [
+          {"threshold": 0.05, "severity": "low"},
+          {"threshold": 0.15, "severity": "medium"},
+          {"threshold": null, "severity": "high"}
+        ]
+      },
+      "params": {
+        "gap_amt": "current_month_expense - current_month_income",
+        "gap_pct_income": "(current_month_expense - current_month_income) / current_month_income"
+      },
+      "message_template": "Current expenses exceed current income",
+      "data_refs": ["/current_month_expense", "/current_month_income"],
+      "recommendation_id": "REC-BALANCE-01"
+    },
+    {
+      "id": "R-SAVE-LOW-01",
+      "bucket": "budget_stability",
+      "name": "Low Savings Rate",
+      "enabled": true,
+      "priority": 2,
+      "condition": {
+        "type": "comparison",
+        "left": "savings_rate",
+        "operator": "<",
+        "right": "persona_min_savings[persona]"
+      },
+      "severity": {
+        "type": "threshold",
+        "metric": "savings_rate / persona_min_savings[persona]",
+        "rules": [
+          {"condition": "< 0.5", "severity": "high"},
+          {"condition": "< 1.0", "severity": "medium"}
+        ]
+      },
+      "params": {
+        "current_rate": "savings_rate",
+        "target_rate": "persona_min_savings[persona]"
+      },
+      "message_template": "Savings rate below persona target",
+      "data_refs": ["/savings_rate"],
+      "recommendation_id": "REC-SAVE-BOOST-01"
+    },
+    {
+      "id": "R-OVRSPEND-01",
+      "bucket": "budget_stability",
+      "name": "Overspending vs Average",
+      "enabled": true,
+      "priority": 3,
+      "condition": {
+        "type": "comparison",
+        "left": "expense_delta_pct",
+        "operator": ">",
+        "right": "overspend_bands.low"
+      },
+      "severity": {
+        "type": "banded",
+        "metric": "expense_delta_pct",
+        "bands": [
+          {"threshold": 0.10, "severity": "low"},
+          {"threshold": 0.20, "severity": "medium"},
+          {"threshold": null, "severity": "high"}
+        ]
+      },
+      "params": {
+        "delta_pct": "expense_delta_pct"
+      },
+      "message_template": "Current expenses above average",
+      "data_refs": ["/current_month_expense", "/avg_monthly_expense"],
+      "recommendation_id": "REC-CAP-01"
+    },
+    {
+      "id": "R-FCAST-DEF-01",
+      "bucket": "forecast_driven",
+      "name": "Forecasted Deficit",
+      "enabled": true,
+      "priority": 2,
+      "condition": {
+        "type": "logical_and",
+        "conditions": [
+          {
+            "type": "comparison",
+            "left": "forecast.predicted_expense_next_month",
+            "operator": ">",
+            "right": "forecast.predicted_income_next_month"
+          },
+          {
+            "type": "comparison",
+            "left": "forecast.confidence",
+            "operator": ">=",
+            "right": 0.7
+          }
+        ]
+      },
+      "severity": {
+        "type": "banded",
+        "metric": "(forecast.predicted_expense_next_month - forecast.predicted_income_next_month) / forecast.predicted_income_next_month",
+        "bands": [
+          {"threshold": 0.05, "severity": "low"},
+          {"threshold": 0.15, "severity": "medium"},
+          {"threshold": null, "severity": "high"}
+        ]
+      },
+      "params": {
+        "gap_amt": "forecast.predicted_expense_next_month - forecast.predicted_income_next_month",
+        "gap_pct_income": "(forecast.predicted_expense_next_month - forecast.predicted_income_next_month) / forecast.predicted_income_next_month"
+      },
+      "message_template": "Forecasted expenses exceed forecasted income",
+      "data_refs": ["/Forecast/predicted_expense_next_month", "/Forecast/predicted_income_next_month", "/Forecast/confidence"],
+      "recommendation_id": "REC-DEFICIT-PREP-01"
+    },
+    {
+      "id": "R-VOL-INC-01",
+      "bucket": "volatility_risk",
+      "name": "High Income Volatility",
+      "enabled": true,
+      "priority": 2,
+      "condition": {
+        "type": "comparison",
+        "left": "income_volatility",
+        "operator": ">",
+        "right": "volatility_threshold[persona]"
+      },
+      "severity": {
+        "type": "threshold",
+        "metric": "income_volatility / volatility_threshold[persona]",
+        "rules": [
+          {"condition": "> 1.5", "severity": "high"},
+          {"condition": "> 1.0", "severity": "medium"}
+        ]
+      },
+      "params": {
+        "income_volatility": "income_volatility",
+        "threshold": "volatility_threshold[persona]"
+      },
+      "message_template": "Income volatility above threshold",
+      "data_refs": ["/income_volatility"],
+      "recommendation_id": "REC-BUFFER-01"
+    },
+    {
+      "id": "R-STAB-LOW-01",
+      "bucket": "volatility_risk",
+      "name": "Low Cashflow Stability",
+      "enabled": true,
+      "priority": 3,
+      "condition": {
+        "type": "comparison",
+        "left": "behavior_metrics.cashflow_stability",
+        "operator": "<",
+        "right": 0.8
+      },
+      "severity": {
+        "type": "threshold",
+        "metric": "behavior_metrics.cashflow_stability",
+        "rules": [
+          {"condition": "< 0.6", "severity": "high"},
+          {"condition": "< 0.8", "severity": "medium"}
+        ]
+      },
+      "params": {
+        "cashflow_stability": "behavior_metrics.cashflow_stability"
+      },
+      "message_template": "Cashflow stability is low",
+      "data_refs": ["/behavior_metrics/cashflow_stability"],
+      "recommendation_id": "REC-CASHFLOW-SMOOTH-01"
+    },
+    {
+      "id": "R-DISC-HIGH-01",
+      "bucket": "volatility_risk",
+      "name": "High Discretionary Spending",
+      "enabled": true,
+      "priority": 3,
+      "condition": {
+        "type": "comparison",
+        "left": "behavior_metrics.discretionary_ratio",
+        "operator": ">",
+        "right": 0.25
+      },
+      "severity": {
+        "type": "banded",
+        "metric": "behavior_metrics.discretionary_ratio",
+        "bands": [
+          {"threshold": 0.25, "severity": "low"},
+          {"threshold": 0.35, "severity": "medium"},
+          {"threshold": null, "severity": "high"}
+        ]
+      },
+      "params": {
+        "discretionary_ratio": "behavior_metrics.discretionary_ratio"
+      },
+      "message_template": "High discretionary spending ratio",
+      "data_refs": ["/behavior_metrics/discretionary_ratio"],
+      "recommendation_id": "REC-DISC-BUDGET-01"
+    },
+    {
+      "id": "R-HSD-01",
+      "bucket": "volatility_risk",
+      "name": "High Number of High-Spend Days",
+      "enabled": true,
+      "priority": 4,
+      "condition": {
+        "type": "comparison",
+        "left": "behavior_metrics.high_spend_days",
+        "operator": ">",
+        "right": 6
+      },
+      "severity": {
+        "type": "threshold",
+        "metric": "behavior_metrics.high_spend_days",
+        "rules": [
+          {"condition": "> 10", "severity": "high"},
+          {"condition": "> 6", "severity": "medium"}
+        ]
+      },
+      "params": {
+        "high_spend_days": "behavior_metrics.high_spend_days"
+      },
+      "message_template": "High number of high-spend days",
+      "data_refs": ["/Behaviour_metrics/high_spend_days", "/behavior_metrics/high_spend_days"],
+      "recommendation_id": "REC-SPEND-ALERT-01"
+    },
+    {
+      "id": "R-CAT-DRIFT-01",
+      "bucket": "category_based",
+      "name": "Category Drift Detection",
+      "enabled": true,
+      "priority": 3,
+      "condition": {
+        "type": "regex_match",
+        "field": "insights.category_drift",
+        "pattern": "(\\w[\\w\\s&-]*)\\s+up\\s+by\\s+(\\d+)%",
+        "extract": ["category", "pct"],
+        "threshold": {
+          "field": "pct",
+          "operator": ">=",
+          "value": 30
+        }
+      },
+      "severity": {
+        "type": "threshold",
+        "metric": "extracted.pct",
+        "rules": [
+          {"condition": ">= 50", "severity": "high"},
+          {"condition": ">= 30", "severity": "medium"}
+        ]
+      },
+      "params": {
+        "category": "extracted.category",
+        "delta_pct": "extracted.pct / 100"
+      },
+      "message_template": "Category {category} increased by {pct}%",
+      "data_refs": ["/insights/category_drift"],
+      "recommendation_id": "REC-CAT-AUDIT-01"
+    },
+    {
+      "id": "R-TOP-CAT-HEAVY-01",
+      "bucket": "category_based",
+      "name": "Top Category Too Heavy",
+      "enabled": true,
+      "priority": 3,
+      "condition": {
+        "type": "comparison",
+        "left": "category_spend[insights.top_spend_category] / current_month_expense",
+        "operator": ">",
+        "right": 0.25
+      },
+      "severity": {
+        "type": "threshold",
+        "metric": "category_spend[insights.top_spend_category] / current_month_expense",
+        "rules": [
+          {"condition": "> 0.4", "severity": "high"},
+          {"condition": "> 0.25", "severity": "medium"}
+        ]
+      },
+      "params": {
+        "category": "insights.top_spend_category",
+        "share": "category_spend[insights.top_spend_category] / current_month_expense"
+      },
+      "message_template": "Top category {category} is {share_pct}% of spend",
+      "data_refs": ["/insights/top_spend_category", "/Category_spend"],
+      "recommendation_id": "REC-CAT-BALANCE-01"
+    },
+    {
+      "id": "R-NO-EMERGENCY-FUND-01",
+      "bucket": "budget_stability",
+      "name": "No Emergency Fund",
+      "enabled": true,
+      "priority": 2,
+      "condition": {
+        "type": "logical_or",
+        "conditions": [
+          {
+            "type": "comparison",
+            "left": "emergency_fund_balance",
+            "operator": "<",
+            "right": "avg_monthly_expense * emergency_fund_months[persona]"
+          },
+          {
+            "type": "is_null",
+            "field": "emergency_fund_balance"
+          }
+        ]
+      },
+      "severity": {
+        "type": "threshold",
+        "metric": "emergency_fund_balance / (avg_monthly_expense * emergency_fund_months[persona])",
+        "rules": [
+          {"condition": "< 0.3", "severity": "high"},
+          {"condition": "< 0.7", "severity": "medium"},
+          {"condition": "< 1.0", "severity": "low"}
+        ]
+      },
+      "params": {
+        "current_buffer": "emergency_fund_balance",
+        "target_buffer": "avg_monthly_expense * emergency_fund_months[persona]",
+        "months_covered": "emergency_fund_balance / avg_monthly_expense"
+      },
+      "message_template": "Emergency fund below recommended level",
+      "data_refs": ["/emergency_fund_balance", "/avg_monthly_expense"],
+      "recommendation_id": "REC-EMERGENCY-FUND-01"
+    },
+    {
+      "id": "R-RENT-HEAVY-01",
+      "bucket": "budget_stability",
+      "name": "Housing Costs Too High",
+      "enabled": true,
+      "priority": 3,
+      "condition": {
+        "type": "logical_and",
+        "conditions": [
+          {
+            "type": "field_exists",
+            "field": "category_spend.Rent"
+          },
+          {
+            "type": "comparison",
+            "left": "category_spend.Rent / current_month_income",
+            "operator": ">",
+            "right": "rent_threshold"
+          }
+        ]
+      },
+      "severity": {
+        "type": "threshold",
+        "metric": "category_spend.Rent / current_month_income",
+        "rules": [
+          {"condition": "> 0.45", "severity": "high"},
+          {"condition": "> 0.35", "severity": "medium"}
+        ]
+      },
+      "params": {
+        "rent_amount": "category_spend.Rent",
+        "rent_ratio": "category_spend.Rent / current_month_income"
+      },
+      "message_template": "Housing costs exceed {rent_threshold_pct}% of income",
+      "data_refs": ["/category_spend/Rent", "/current_month_income"],
+      "recommendation_id": "REC-HOUSING-REVIEW-01"
+    },
+    {
+      "id": "R-FOOD-SPIKE-01",
+      "bucket": "category_based",
+      "name": "Food Spending Spike",
+      "enabled": true,
+      "priority": 4,
+      "condition": {
+        "type": "logical_and",
+        "conditions": [
+          {
+            "type": "field_exists",
+            "field": "category_spend.Food"
+          },
+          {
+            "type": "comparison",
+            "left": "category_spend.Food / current_month_expense",
+            "operator": ">",
+            "right": "category_thresholds.food"
+          }
+        ]
+      },
+      "severity": {
+        "type": "threshold",
+        "metric": "category_spend.Food / current_month_expense",
+        "rules": [
+          {"condition": "> 0.40", "severity": "high"},
+          {"condition": "> 0.30", "severity": "medium"}
+        ]
+      },
+      "params": {
+        "food_amount": "category_spend.Food",
+        "food_ratio": "category_spend.Food / current_month_expense"
+      },
+      "message_template": "Food spending is {food_ratio_pct}% of total expenses",
+      "data_refs": ["/category_spend/Food", "/current_month_expense"],
+      "recommendation_id": "REC-FOOD-AUDIT-01"
+    },
+    {
+      "id": "R-FCAST-SURPLUS-01",
+      "bucket": "forecast_driven",
+      "name": "Forecasted Surplus",
+      "enabled": true,
+      "priority": 5,
+      "condition": {
+        "type": "logical_and",
+        "conditions": [
+          {
+            "type": "comparison",
+            "left": "forecast.predicted_income_next_month - forecast.predicted_expense_next_month",
+            "operator": ">",
+            "right": 0
+          },
+          {
+            "type": "comparison",
+            "left": "(forecast.predicted_income_next_month - forecast.predicted_expense_next_month) / forecast.predicted_income_next_month",
+            "operator": ">",
+            "right": "forecast_surplus_threshold"
+          },
+          {
+            "type": "comparison",
+            "left": "forecast.confidence",
+            "operator": ">=",
+            "right": "forecast_confidence_min"
+          }
+        ]
+      },
+      "severity": {
+        "type": "fixed",
+        "value": "low"
+      },
+      "params": {
+        "surplus_amount": "forecast.predicted_income_next_month - forecast.predicted_expense_next_month",
+        "surplus_ratio": "(forecast.predicted_income_next_month - forecast.predicted_expense_next_month) / forecast.predicted_income_next_month"
+      },
+      "message_template": "Forecasted surplus of {surplus_amount} ({surplus_ratio_pct}% of income) next month",
+      "data_refs": ["/Forecast/predicted_income_next_month", "/Forecast/predicted_expense_next_month"],
+      "recommendation_id": "REC-SURPLUS-INVEST-01"
+    },
+    {
+      "id": "R-SAVE-LOW-01",
+      "bucket": "budget_stability",
+      "name": "Low Savings Rate",
+      "enabled": true,
+      "priority": 2,
+      "condition": {
+        "type": "comparison",
+        "left": "savings_rate",
+        "operator": "<",
+        "right": "persona_min_savings[persona]"
+      },
+      "severity": {
+        "type": "threshold",
+        "metric": "savings_rate / persona_min_savings[persona]",
+        "rules": [
+          {"condition": "< 0.5", "severity": "high"},
+          {"condition": "< 1.0", "severity": "medium"}
+        ]
+      },
+      "params": {
+        "current_rate": "savings_rate",
+        "target_rate": "persona_min_savings[persona]"
+      },
+      "message_template": "Savings rate below persona target",
+      "data_refs": ["/savings_rate"],
+      "recommendation_id": "REC-SAVE-BOOST-01"
+    },
+    {
+      "id": "R-WEEKLY-SPIKE-01",
+      "bucket": "budget_stability",
+      "name": "Weekly Spending Spike",
+      "enabled": true,
+      "priority": 3,
+      "condition": {
+        "type": "comparison",
+        "left": "max_weekly_expense / avg_weekly_expense",
+        "operator": ">",
+        "right": 1.5
+      },
+      "severity": {
+        "type": "threshold",
+        "metric": "max_weekly_expense / avg_weekly_expense",
+        "rules": [
+          {"condition": "> 2.0", "severity": "high"},
+          {"condition": "> 1.5", "severity": "medium"}
+        ]
+      },
+      "params": {
+        "max_weekly": "max_weekly_expense",
+        "avg_weekly": "avg_weekly_expense",
+        "spike_ratio": "max_weekly_expense / avg_weekly_expense"
+      },
+      "message_template": "One week's spending was {spike_ratio}x the average",
+      "data_refs": ["/weekly_expenses"],
+      "recommendation_id": "REC-WEEKLY-BUDGET-01"
+    },
+    {
+      "id": "R-CONSEC-DEF-01",
+      "bucket": "budget_stability",
+      "name": "Consecutive Deficit Months",
+      "enabled": true,
+      "priority": 1,
+      "condition": {
+        "type": "comparison",
+        "left": "consecutive_deficit_count",
+        "operator": ">=",
+        "right": 2
+      },
+      "severity": {
+        "type": "threshold",
+        "metric": "consecutive_deficit_count",
+        "rules": [
+          {"condition": ">= 3", "severity": "high"},
+          {"condition": ">= 2", "severity": "medium"}
+        ]
+      },
+      "params": {
+        "consecutive_months": "consecutive_deficit_count"
+      },
+      "message_template": "Deficit for {consecutive_months} consecutive months",
+      "data_refs": ["/consecutive_deficit_count"],
+      "recommendation_id": "REC-DEFICIT-RECOVERY-01"
+    },
+    {
+      "id": "R-SAVE-DEPLETE-01",
+      "bucket": "budget_stability",
+      "name": "Savings Depleting Rapidly",
+      "enabled": true,
+      "priority": 1,
+      "condition": {
+        "type": "comparison",
+        "left": "(previous_savings_balance - current_savings_balance) / previous_savings_balance",
+        "operator": ">",
+        "right": 0.20
+      },
+      "severity": {
+        "type": "threshold",
+        "metric": "(previous_savings_balance - current_savings_balance) / previous_savings_balance",
+        "rules": [
+          {"condition": "> 0.40", "severity": "high"},
+          {"condition": "> 0.20", "severity": "medium"}
+        ]
+      },
+      "params": {
+        "depletion_rate": "(previous_savings_balance - current_savings_balance) / previous_savings_balance",
+        "prev_balance": "previous_savings_balance",
+        "current_balance": "current_savings_balance"
+      },
+      "message_template": "Savings dropped by {depletion_rate_pct}% this month",
+      "data_refs": ["/previous_savings_balance", "/current_savings_balance"],
+      "recommendation_id": "REC-STOP-SAVINGS-DRAIN-01"
+    },
+    {
+      "id": "R-INCOME-DROP-01",
+      "bucket": "volatility_risk",
+      "name": "Significant Income Drop",
+      "enabled": true,
+      "priority": 1,
+      "condition": {
+        "type": "comparison",
+        "left": "(previous_month_income - current_month_income) / previous_month_income",
+        "operator": ">",
+        "right": 0.20
+      },
+      "severity": {
+        "type": "threshold",
+        "metric": "(previous_month_income - current_month_income) / previous_month_income",
+        "rules": [
+          {"condition": "> 0.40", "severity": "high"},
+          {"condition": "> 0.20", "severity": "medium"}
+        ]
+      },
+      "params": {
+        "drop_pct": "(previous_month_income - current_month_income) / previous_month_income",
+        "prev_income": "previous_month_income",
+        "current_income": "current_month_income"
+      },
+      "message_template": "Income dropped by {drop_pct_pct}% from last month",
+      "data_refs": ["/previous_month_income", "/current_month_income"],
+      "recommendation_id": "REC-INCOME-RECOVERY-01"
+    },
+    {
+      "id": "R-LARGE-TXN-01",
+      "bucket": "volatility_risk",
+      "name": "Large Transaction Detected",
+      "enabled": true,
+      "priority": 3,
+      "condition": {
+        "type": "comparison",
+        "left": "max_large_transaction / current_month_income",
+        "operator": ">",
+        "right": 0.20
+      },
+      "severity": {
+        "type": "threshold",
+        "metric": "max_large_transaction / current_month_income",
+        "rules": [
+          {"condition": "> 0.30", "severity": "high"},
+          {"condition": "> 0.20", "severity": "medium"}
+        ]
+      },
+      "params": {
+        "transaction_amount": "max_large_transaction",
+        "income_ratio": "max_large_transaction / current_month_income"
+      },
+      "message_template": "Single transaction of {transaction_amount} is {income_ratio_pct}% of monthly income",
+      "data_refs": ["/large_transactions", "/current_month_income"],
+      "recommendation_id": "REC-REVIEW-LARGE-TXN-01"
+    },
+    {
+      "id": "R-ZERO-INC-DAYS-01",
+      "bucket": "volatility_risk",
+      "name": "Too Many Zero-Income Days",
+      "enabled": true,
+      "priority": 2,
+      "condition": {
+        "type": "comparison",
+        "left": "zero_income_days",
+        "operator": ">",
+        "right": 7
+      },
+      "severity": {
+        "type": "threshold",
+        "metric": "zero_income_days",
+        "rules": [
+          {"condition": "> 10", "severity": "high"},
+          {"condition": "> 7", "severity": "medium"}
+        ]
+      },
+      "params": {
+        "zero_income_days": "zero_income_days"
+      },
+      "message_template": "{zero_income_days} days with zero income detected",
+      "data_refs": ["/zero_income_days"],
+      "recommendation_id": "REC-INCOME-DIVERSIFY-01"
+    },
+    {
+      "id": "R-CASHFLOW-VAR-01",
+      "bucket": "volatility_risk",
+      "name": "High Cashflow Variance",
+      "enabled": true,
+      "priority": 3,
+      "condition": {
+        "type": "comparison",
+        "left": "cashflow_coefficient_variation",
+        "operator": ">",
+        "right": 0.35
+      },
+      "severity": {
+        "type": "threshold",
+        "metric": "cashflow_coefficient_variation",
+        "rules": [
+          {"condition": "> 0.50", "severity": "high"},
+          {"condition": "> 0.35", "severity": "medium"}
+        ]
+      },
+      "params": {
+        "coefficient_of_variation": "cashflow_coefficient_variation"
+      },
+      "message_template": "Cashflow variance is high (CV={coefficient_of_variation})",
+      "data_refs": ["/weekly_expenses"],
+      "recommendation_id": "REC-STABILIZE-CASHFLOW-01"
+    },
+    {
+      "id": "R-FOOD-HIGH-01",
+      "bucket": "category_based",
+      "name": "Food Expenses Exceed Threshold",
+      "enabled": true,
+      "priority": 3,
+      "condition": {
+        "type": "comparison",
+        "left": "category_spend[Food] / current_month_income",
+        "operator": ">",
+        "right": 0.25
+      },
+      "severity": {
+        "type": "threshold",
+        "metric": "category_spend[Food] / current_month_income",
+        "rules": [
+          {"condition": "> 0.35", "severity": "high"},
+          {"condition": "> 0.25", "severity": "medium"}
+        ]
+      },
+      "params": {
+        "food_amount": "category_spend[Food]",
+        "income_ratio": "category_spend[Food] / current_month_income"
+      },
+      "message_template": "Food spending is {income_ratio_pct}% of income (recommended: ≤25%)",
+      "data_refs": ["/Category_spend/Food", "/current_month_income"],
+      "recommendation_id": "REC-FOOD-BUDGET-01"
+    },
+    {
+      "id": "R-TRANSPORT-HIGH-01",
+      "bucket": "category_based",
+      "name": "Transport Expenses Exceed Threshold",
+      "enabled": true,
+      "priority": 3,
+      "condition": {
+        "type": "comparison",
+        "left": "category_spend[Transport] / current_month_income",
+        "operator": ">",
+        "right": 0.15
+      },
+      "severity": {
+        "type": "threshold",
+        "metric": "category_spend[Transport] / current_month_income",
+        "rules": [
+          {"condition": "> 0.25", "severity": "high"},
+          {"condition": "> 0.15", "severity": "medium"}
+        ]
+      },
+      "params": {
+        "transport_amount": "category_spend[Transport]",
+        "income_ratio": "category_spend[Transport] / current_month_income"
+      },
+      "message_template": "Transport spending is {income_ratio_pct}% of income (recommended: ≤15%)",
+      "data_refs": ["/Category_spend/Transport", "/current_month_income"],
+      "recommendation_id": "REC-TRANSPORT-OPTIMIZE-01"
+    },
+    {
+      "id": "R-CASH-SPIKE-01",
+      "bucket": "category_based",
+      "name": "Cash Withdrawal Spike",
+      "enabled": true,
+      "priority": 3,
+      "condition": {
+        "type": "comparison",
+        "left": "cash_withdrawals / (avg_monthly_expense * 0.10)",
+        "operator": ">",
+        "right": 1.5
+      },
+      "severity": {
+        "type": "fixed",
+        "value": "medium"
+      },
+      "params": {
+        "cash_amount": "cash_withdrawals",
+        "spike_ratio": "cash_withdrawals / (avg_monthly_expense * 0.10)"
+      },
+      "message_template": "Cash withdrawals are {spike_ratio}x the average",
+      "data_refs": ["/cash_withdrawals"],
+      "recommendation_id": "REC-CASH-TRACK-01"
+    },
+    {
+      "id": "R-LOAN-EMI-HIGH-01",
+      "bucket": "category_based",
+      "name": "Loan EMI Burden Too High",
+      "enabled": true,
+      "priority": 2,
+      "condition": {
+        "type": "comparison",
+        "left": "loan_emi_total / current_month_income",
+        "operator": ">",
+        "right": 0.40
+      },
+      "severity": {
+        "type": "threshold",
+        "metric": "loan_emi_total / current_month_income",
+        "rules": [
+          {"condition": "> 0.50", "severity": "high"},
+          {"condition": "> 0.40", "severity": "medium"}
+        ]
+      },
+      "params": {
+        "emi_total": "loan_emi_total",
+        "income_ratio": "loan_emi_total / current_month_income"
+      },
+      "message_template": "Loan EMI is {income_ratio_pct}% of income (recommended: ≤40%)",
+      "data_refs": ["/loan_emi_total", "/current_month_income"],
+      "recommendation_id": "REC-LOAN-CONSOLIDATE-01"
+    },
+    {
+      "id": "R-UTILITIES-SPIKE-01",
+      "bucket": "category_based",
+      "name": "Utilities Spike Detected",
+      "enabled": true,
+      "priority": 3,
+      "condition": {
+        "type": "comparison",
+        "left": "category_spend[Utilities] / (avg_monthly_expense * 0.11)",
+        "operator": ">",
+        "right": 1.3
+      },
+      "severity": {
+        "type": "fixed",
+        "value": "medium"
+      },
+      "params": {
+        "utilities_amount": "category_spend[Utilities]",
+        "spike_ratio": "category_spend[Utilities] / (avg_monthly_expense * 0.11)"
+      },
+      "message_template": "Utilities spending is {spike_ratio}x the expected baseline",
+      "data_refs": ["/Category_spend/Utilities"],
+      "recommendation_id": "REC-UTILITIES-AUDIT-01"
+    },
+    {
+      "id": "R-BUFFER-WARN-01",
+      "bucket": "forecast_driven",
+      "name": "Buffer Below Warning Threshold",
+      "enabled": true,
+      "priority": 2,
+      "condition": {
+        "type": "comparison",
+        "left": "emergency_fund_balance / avg_monthly_expense",
+        "operator": "<",
+        "right": "buffer_months_warning[persona]"
+      },
+      "severity": {
+        "type": "threshold",
+        "metric": "(emergency_fund_balance / avg_monthly_expense) / buffer_months_warning[persona]",
+        "rules": [
+          {"condition": "< 0.5", "severity": "high"},
+          {"condition": "< 1.0", "severity": "medium"}
+        ]
+      },
+      "params": {
+        "buffer_months": "emergency_fund_balance / avg_monthly_expense",
+        "warning_threshold": "buffer_months_warning[persona]"
+      },
+      "message_template": "Buffer covers only {buffer_months} months (recommended: ≥{warning_threshold})",
+      "data_refs": ["/emergency_fund_balance", "/avg_monthly_expense"],
+      "recommendation_id": "REC-BUILD-BUFFER-01"
+    },
+    {
+      "id": "R-FCAST-CONF-LOW-01",
+      "bucket": "forecast_driven",
+      "name": "Forecast Confidence Too Low",
+      "enabled": true,
+      "priority": 3,
+      "condition": {
+        "type": "comparison",
+        "left": "forecast.confidence",
+        "operator": "<",
+        "right": 0.70
+      },
+      "severity": {
+        "type": "fixed",
+        "value": "low"
+      },
+      "params": {
+        "confidence": "forecast.confidence"
+      },
+      "message_template": "Forecast confidence is {confidence} (below threshold 0.70)",
+      "data_refs": ["/Forecast/confidence"],
+      "recommendation_id": "REC-IMPROVE-DATA-01"
+    },
+    {
+      "id": "R-FCAST-DEF-LARGE-01",
+      "bucket": "forecast_driven",
+      "name": "Forecasted Deficit Large",
+      "enabled": true,
+      "priority": 1,
+      "condition": {
+        "type": "logical_and",
+        "conditions": [
+          {
+            "type": "comparison",
+            "left": "(forecast.predicted_expense_next_month - forecast.predicted_income_next_month) / forecast.predicted_income_next_month",
+            "operator": ">",
+            "right": 0.10
+          },
+          {
+            "type": "comparison",
+            "left": "forecast.confidence",
+            "operator": ">=",
+            "right": 0.70
+          }
+        ]
+      },
+      "severity": {
+        "type": "threshold",
+        "metric": "(forecast.predicted_expense_next_month - forecast.predicted_income_next_month) / forecast.predicted_income_next_month",
+        "rules": [
+          {"condition": "> 0.20", "severity": "high"},
+          {"condition": "> 0.10", "severity": "medium"}
+        ]
+      },
+      "params": {
+        "deficit_amount": "forecast.predicted_expense_next_month - forecast.predicted_income_next_month",
+        "deficit_ratio": "(forecast.predicted_expense_next_month - forecast.predicted_income_next_month) / forecast.predicted_income_next_month"
+      },
+      "message_template": "Forecasted deficit is {deficit_ratio_pct}% of next month's income",
+      "data_refs": ["/Forecast/predicted_expense_next_month", "/Forecast/predicted_income_next_month"],
+      "recommendation_id": "REC-DEFICIT-PREP-01"
+    }
+  ],
+  "rule_groups": {
+    "budget_stability": {
+      "name": "Budget Stability",
+      "description": "Rules monitoring income, expenses, and savings discipline",
+      "weight": 0.35
+    },
+    "volatility_risk": {
+      "name": "Volatility & Risk",
+      "description": "Rules tracking income/expense volatility and behavioral patterns",
+      "weight": 0.30
+    },
+    "category_based": {
+      "name": "Category-Based",
+      "description": "Rules monitoring spending patterns in specific categories",
+      "weight": 0.20
+    },
+    "forecast_driven": {
+      "name": "Forecast-Driven",
+      "description": "Rules using predictive models and forecasted data",
+      "weight": 0.15
+    }
+  }
+}

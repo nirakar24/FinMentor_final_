@@ -1,0 +1,287 @@
+{
+  "metadata": {
+    "user_id": "U12345",
+    "month": "2025-10",
+    "persona": "gig_worker",
+    "currency": "₹",
+    "generated_at": "2025-11-27T19:03:59.210285Z",
+    "engine_version": "1.0.0",
+    "engine_mode": "dynamic",
+    "confidence": 0.89
+  },
+  "risks": [
+    {
+      "id": "RK-SAVINGS",
+      "dimension": "savings",
+      "score": 100,
+      "severity": "high",
+      "summary": "Savings risk: high",
+      "reasons": [
+        "Savings rate below persona target",
+        "Buffer covers only 0.0 months (recommended: ≥4)"
+      ],
+      "data_refs": [
+        "/savings_rate",
+        "/emergency_fund_balance",
+        "/avg_monthly_expense"
+      ],
+      "contributors": [
+        {
+          "rule_id": "R-SAVE-LOW-01",
+          "severity": "high",
+          "weight": 1
+        },
+        {
+          "rule_id": "R-BUFFER-WARN-01",
+          "severity": "high",
+          "weight": 1
+        }
+      ],
+      "weighted_score": 6,
+      "max_possible_score": 6
+    },
+    {
+      "id": "RK-STABILITY",
+      "dimension": "stability",
+      "score": 66.7,
+      "severity": "medium",
+      "summary": "Stability risk: medium",
+      "reasons": [
+        "Cashflow stability is low"
+      ],
+      "data_refs": [
+        "/behavior_metrics/cashflow_stability"
+      ],
+      "contributors": [
+        {
+          "rule_id": "R-STAB-LOW-01",
+          "severity": "medium",
+          "weight": 1
+        }
+      ],
+      "weighted_score": 2,
+      "max_possible_score": 3
+    },
+    {
+      "id": "RK-DISCRETIONARY",
+      "dimension": "discretionary",
+      "score": 33.3,
+      "severity": "low",
+      "summary": "Discretionary risk: low",
+      "reasons": [
+        "High discretionary spending ratio"
+      ],
+      "data_refs": [
+        "/behavior_metrics/discretionary_ratio"
+      ],
+      "contributors": [
+        {
+          "rule_id": "R-DISC-HIGH-01",
+          "severity": "low",
+          "weight": 1
+        }
+      ],
+      "weighted_score": 1,
+      "max_possible_score": 3
+    },
+    {
+      "id": "RK-CATEGORY_OUTLIER",
+      "dimension": "category_outlier",
+      "score": 33.3,
+      "severity": "low",
+      "summary": "Category_outlier risk: low",
+      "reasons": [
+        "Category Entertainment increased by 40%"
+      ],
+      "data_refs": [
+        "/insights/category_drift"
+      ],
+      "contributors": [
+        {
+          "rule_id": "R-CAT-DRIFT-01",
+          "severity": "low",
+          "weight": 1
+        }
+      ],
+      "weighted_score": 1,
+      "max_possible_score": 3
+    }
+  ],
+  "rule_triggers": [
+    {
+      "rule_id": "R-SAVE-LOW-01",
+      "triggered": true,
+      "severity": "high",
+      "weight": 1,
+      "params": {
+        "current_rate": 0.11,
+        "target_rate": 0.25
+      },
+      "reason": "Savings rate below persona target",
+      "data_refs": [
+        "/savings_rate"
+      ]
+    },
+    {
+      "rule_id": "R-NO-EMERGENCY-FUND-01",
+      "triggered": true,
+      "severity": "high",
+      "weight": 1,
+      "params": {
+        "current_buffer": 0,
+        "target_buffer": 118800,
+        "months_covered": 0
+      },
+      "reason": "Emergency fund below recommended level",
+      "data_refs": [
+        "/emergency_fund_balance",
+        "/avg_monthly_expense"
+      ]
+    },
+    {
+      "rule_id": "R-BUFFER-WARN-01",
+      "triggered": true,
+      "severity": "high",
+      "weight": 1,
+      "params": {
+        "buffer_months": 0,
+        "warning_threshold": 4
+      },
+      "reason": "Buffer covers only 0.0 months (recommended: ≥4)",
+      "data_refs": [
+        "/emergency_fund_balance",
+        "/avg_monthly_expense"
+      ]
+    },
+    {
+      "rule_id": "R-STAB-LOW-01",
+      "triggered": true,
+      "severity": "medium",
+      "weight": 1,
+      "params": {
+        "cashflow_stability": 0.75
+      },
+      "reason": "Cashflow stability is low",
+      "data_refs": [
+        "/behavior_metrics/cashflow_stability"
+      ]
+    },
+    {
+      "rule_id": "R-DISC-HIGH-01",
+      "triggered": true,
+      "severity": "low",
+      "weight": 1,
+      "params": {
+        "discretionary_ratio": 0.28
+      },
+      "reason": "High discretionary spending ratio",
+      "data_refs": [
+        "/behavior_metrics/discretionary_ratio"
+      ]
+    },
+    {
+      "rule_id": "R-CAT-DRIFT-01",
+      "triggered": true,
+      "severity": "low",
+      "weight": 1,
+      "params": {},
+      "reason": "Category Entertainment increased by 40%",
+      "data_refs": [
+        "/insights/category_drift"
+      ]
+    }
+  ],
+  "recommendations": [
+    {
+      "id": "REC-SAVE-BOOST-01",
+      "title": "Boost savings rate",
+      "body": "Savings rate is below target. Set an auto-transfer to reach 25% upon income receipt.",
+      "actions": [
+        "Create automated savings transfer on payday"
+      ],
+      "amounts": {
+        "new_savings_rate": 0.25
+      },
+      "linked_risks": [
+        "RK-SAVINGS"
+      ],
+      "priority": 2,
+      "valid_for_days": 30,
+      "data_refs": [
+        "/savings_rate"
+      ]
+    },
+    {
+      "id": "REC-SPEND-ALERT-01",
+      "title": "Tighten daily spending",
+      "body": "Discretionary spending is high. Set a daily budget of ₹161 and enable alerts when you hit 80% of daily limit.",
+      "actions": [
+        "Enable daily alerts at ₹129 (80% of daily budget)",
+        "Apply hard stops after daily budget is exceeded",
+        "Use cash envelopes for discretionary categories"
+      ],
+      "amounts": {
+        "daily_budget": 161,
+        "monthly_target": 4830
+      },
+      "linked_risks": [
+        "RK-DISCRETIONARY"
+      ],
+      "priority": 3,
+      "valid_for_days": 30,
+      "data_refs": [
+        "/behavior_metrics/discretionary_ratio"
+      ]
+    }
+  ],
+  "action_plan": {
+    "next_30_days": [
+      {
+        "action_id": "REC-SAVE-BOOST-01",
+        "title": "Boost savings rate",
+        "kpi": "complete_action",
+        "target": 1,
+        "owner": "user"
+      },
+      {
+        "action_id": "REC-SPEND-ALERT-01",
+        "title": "Tighten daily spending",
+        "kpi": "complete_action",
+        "target": 1,
+        "owner": "user"
+      }
+    ],
+    "next_90_days": [],
+    "kpis": []
+  },
+  "alerts": [],
+  "audit": {
+    "input_fields": [
+      "user_id",
+      "month",
+      "avg_monthly_income",
+      "avg_monthly_expense",
+      "current_month_income",
+      "current_month_expense",
+      "savings_rate",
+      "income_volatility",
+      "risk_level",
+      "category_spend",
+      "behavior_metrics",
+      "forecast",
+      "persona_type",
+      "confidence_score",
+      "last_updated",
+      "insights"
+    ],
+    "normalization": {
+      "used_aliases": [
+        "category_spend",
+        "behavior_metrics",
+        "forecast"
+      ]
+    },
+    "rules_evaluated": 29,
+    "rules_triggered": 6
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "user_id": "GIG_001",
+  "user_query": "Can I go on a vacation this month?",
+  "rules_output": {
+    "risk_summary": {
+      "total_risk_score": 85,
+      "weighted_severity": "high",
+      "top_risks": [
+        {
+          "id": "R-001",
+          "dimension": "savings",
+          "severity": "high",
+          "summary": "Emergency fund critically low at 0.22 months"
+        },
+        {
+          "id": "R-002",
+          "dimension": "debt",
+          "severity": "high",
+          "summary": "Debt-to-income ratio exceeds 80%"
+        },
+        {
+          "id": "R-003",
+          "dimension": "cashflow",
+          "severity": "medium",
+          "summary": "Income volatility at 42/100 stability score"
+        }
+      ]
+    },
+    "normalized_data": {
+      "avg_monthly_income": 55000,
+      "avg_monthly_expense": 48000,
+      "current_month_income": 52000,
+      "current_month_expense": 48000,
+      "savings_rate": 0.13,
+      "income_volatility": 0.58,
+      "emergency_fund_balance": 12000,
+      "behavior_metrics": {
+        "avg_daily_expense": 1600,
+        "high_spend_days": 8,
+        "cashflow_stability": 0.42,
+        "discretionary_ratio": 0.31
+      }
+    }
+  },
+  "behavior_output": {
+    "user_id": "GIG_001",
+    "behavior_flags": [
+      "high_discretionary_spender",
+      "frequent_high_spend_days",
+      "unstable_cashflow",
+      "income_gap_risk"
+    ],
+    "behavior_score": 80,
+    "risk_level": "high"
+  },
+  "persona_type": "gig_worker"
+}

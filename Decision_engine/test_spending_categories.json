@@ -1,0 +1,74 @@
+{
+  "user_id": "GIG_001",
+  "user_query": "Should I reduce my food spending?",
+  "rules_output": {
+    "risk_summary": {
+      "total_risk_score": 65,
+      "weighted_severity": "medium",
+      "top_risks": [
+        {
+          "id": "R-001",
+          "dimension": "savings",
+          "severity": "medium",
+          "summary": "Savings rate below recommended 20%"
+        }
+      ]
+    },
+    "normalized_data": {
+      "avg_monthly_income": 55000,
+      "avg_monthly_expense": 48000,
+      "current_month_income": 52000,
+      "current_month_expense": 48000,
+      "savings_rate": 0.13,
+      "income_volatility": 0.58,
+      "emergency_fund_balance": 25000,
+      "spending_categories": [
+        {
+          "category": "Housing",
+          "amount": 15000,
+          "percentage": 31.25
+        },
+        {
+          "category": "Food",
+          "amount": 12000,
+          "percentage": 25.0
+        },
+        {
+          "category": "Transportation",
+          "amount": 8000,
+          "percentage": 16.67
+        },
+        {
+          "category": "Utilities",
+          "amount": 3000,
+          "percentage": 6.25
+        },
+        {
+          "category": "Entertainment",
+          "amount": 5000,
+          "percentage": 10.42
+        },
+        {
+          "category": "Others",
+          "amount": 5000,
+          "percentage": 10.42
+        }
+      ],
+      "behavior_metrics": {
+        "avg_daily_expense": 1600,
+        "high_spend_days": 5,
+        "cashflow_stability": 0.65,
+        "discretionary_ratio": 0.28
+      }
+    }
+  },
+  "behavior_output": {
+    "user_id": "GIG_001",
+    "behavior_flags": [
+      "high_discretionary_spender"
+    ],
+    "behavior_score": 40,
+    "risk_level": "medium"
+  },
+  "persona_type": "gig_worker"
+}

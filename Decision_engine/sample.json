@@ -1,0 +1,42 @@
+{
+  "user_id": "U12345",
+  "month": "2025-10",
+  "avg_monthly_income": 24500,
+  "avg_monthly_expense": 19800,
+  "current_month_income": 23000,
+  "current_month_expense": 20500,
+  "savings_rate": 0.11,
+  "income_volatility": 0.22,
+  "risk_level": "moderate",
+  
+  "Category_spend": {
+    "Food": 4200,
+    "Transport": 1900,
+    "Entertainment": 2300,
+    "Utilities": 2600,
+    "Health": 800
+  },
+
+  "Behaviour_metrics": {
+    "avg_daily_expense": 700,
+    "high_spend_days": 5,
+    "cashflow_stability": 0.75,
+    "discretionary_ratio": 0.28
+  },
+
+  "Forecast": {
+    "predicted_income_next_month": 24000,
+    "predicted_expense_next_month": 19000,
+    "savings": 5000,
+    "confidence": 0.83
+  },
+
+  "persona_type": "gig_worker",
+  "confidence_score": 0.89,
+  "last_updated": "2025-11-07T14:32:00Z",
+
+  "insights": {
+    "top_spend_category": "Food",
+    "category_drift": "Entertainment up by 40%"
+  }
+}
