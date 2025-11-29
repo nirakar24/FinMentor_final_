@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 from pathlib import Path
 from typing import Dict, Any, List, Optional
 import json
@@ -61,11 +62,24 @@ app = FastAPI(
     redoc_url="/redoc"
 )
 
+origins = [
+    "http://localhost.tiangolo.com",
+    "https://localhost.tiangolo.com",
+    "http://localhost",
+    "http://localhost:5173",
+]
+
 # Register new routers
 app.include_router(behavior_router)
 app.include_router(advice_router)
 
-
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 @app.get("/health")
 def health() -> Dict[str, Any]:
     return {"status": "ok", "engine_version": APP_VERSION}

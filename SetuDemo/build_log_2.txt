@@ -1,0 +1,19 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+C:\Users\iraje\source\repos\SetuDemo\Program.cs(34,44): error CS0104: 'ServerVersion' is an ambiguous reference between 'MongoDB.Driver.ServerVersion' and 'Microsoft.EntityFrameworkCore.ServerVersion' [C:\Users\iraje\source\repos\SetuDemo\SetuDemo.csproj]
+C:\Users\iraje\source\repos\SetuDemo\Services\FiuClient.cs(113,25): warning CS8600: Converting null literal or possible null value to non-nullable type. [C:\Users\iraje\source\repos\SetuDemo\SetuDemo.csproj]
+C:\Users\iraje\source\repos\SetuDemo\Services\FiuClient.cs(114,26): warning CS8600: Converting null literal or possible null value to non-nullable type. [C:\Users\iraje\source\repos\SetuDemo\SetuDemo.csproj]
+C:\Users\iraje\source\repos\SetuDemo\Services\FiuClient.cs(116,20): warning CS8619: Nullability of reference types in value of type '(string? id, string? url)' doesn't match target type '(string consentId, string consentUrl)'. [C:\Users\iraje\source\repos\SetuDemo\SetuDemo.csproj]
+
+Build FAILED.
+
+C:\Users\iraje\source\repos\SetuDemo\Services\FiuClient.cs(113,25): warning CS8600: Converting null literal or possible null value to non-nullable type. [C:\Users\iraje\source\repos\SetuDemo\SetuDemo.csproj]
+C:\Users\iraje\source\repos\SetuDemo\Services\FiuClient.cs(114,26): warning CS8600: Converting null literal or possible null value to non-nullable type. [C:\Users\iraje\source\repos\SetuDemo\SetuDemo.csproj]
+C:\Users\iraje\source\repos\SetuDemo\Services\FiuClient.cs(116,20): warning CS8619: Nullability of reference types in value of type '(string? id, string? url)' doesn't match target type '(string consentId, string consentUrl)'. [C:\Users\iraje\source\repos\SetuDemo\SetuDemo.csproj]
+C:\Users\iraje\source\repos\SetuDemo\Program.cs(34,44): error CS0104: 'ServerVersion' is an ambiguous reference between 'MongoDB.Driver.ServerVersion' and 'Microsoft.EntityFrameworkCore.ServerVersion' [C:\Users\iraje\source\repos\SetuDemo\SetuDemo.csproj]
+    3 Warning(s)
+    1 Error(s)
+
+Time Elapsed 00:00:01.56
+
+Workload updates are available. Run `dotnet workload list` for more information.

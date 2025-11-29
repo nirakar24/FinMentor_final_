@@ -1,0 +1,6 @@
+@SetuDemo_HostAddress = http://localhost:5189
+
+GET {{SetuDemo_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

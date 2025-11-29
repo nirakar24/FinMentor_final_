@@ -13,11 +13,11 @@ export const runAgent = async (userId, userQuery) => {
   try {
     const response = await api.post('/agent/run', {
       user_id: userId,
-      user_query: userQuery,
+      query: userQuery,
     });
-    
+
     const data = response.data;
-    
+
     // Transform the response to match our component expectations
     return {
       user_id: data.user_id,

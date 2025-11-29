@@ -1,0 +1,21 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+C:\Users\iraje\source\repos\SetuDemo\Program.cs(33,58): error CS0117: 'ServerVersion' does not contain a definition for 'AutoDetect' [C:\Users\iraje\source\repos\SetuDemo\SetuDemo.csproj]
+C:\Users\iraje\source\repos\SetuDemo\Program.cs(33,17): error CS1061: 'DbContextOptionsBuilder' does not contain a definition for 'UseMySql' and no accessible extension method 'UseMySql' accepting a first argument of type 'DbContextOptionsBuilder' could be found (are you missing a using directive or an assembly reference?) [C:\Users\iraje\source\repos\SetuDemo\SetuDemo.csproj]
+C:\Users\iraje\source\repos\SetuDemo\Services\FiuClient.cs(113,25): warning CS8600: Converting null literal or possible null value to non-nullable type. [C:\Users\iraje\source\repos\SetuDemo\SetuDemo.csproj]
+C:\Users\iraje\source\repos\SetuDemo\Services\FiuClient.cs(114,26): warning CS8600: Converting null literal or possible null value to non-nullable type. [C:\Users\iraje\source\repos\SetuDemo\SetuDemo.csproj]
+C:\Users\iraje\source\repos\SetuDemo\Services\FiuClient.cs(116,20): warning CS8619: Nullability of reference types in value of type '(string? id, string? url)' doesn't match target type '(string consentId, string consentUrl)'. [C:\Users\iraje\source\repos\SetuDemo\SetuDemo.csproj]
+
+Build FAILED.
+
+C:\Users\iraje\source\repos\SetuDemo\Services\FiuClient.cs(113,25): warning CS8600: Converting null literal or possible null value to non-nullable type. [C:\Users\iraje\source\repos\SetuDemo\SetuDemo.csproj]
+C:\Users\iraje\source\repos\SetuDemo\Services\FiuClient.cs(114,26): warning CS8600: Converting null literal or possible null value to non-nullable type. [C:\Users\iraje\source\repos\SetuDemo\SetuDemo.csproj]
+C:\Users\iraje\source\repos\SetuDemo\Services\FiuClient.cs(116,20): warning CS8619: Nullability of reference types in value of type '(string? id, string? url)' doesn't match target type '(string consentId, string consentUrl)'. [C:\Users\iraje\source\repos\SetuDemo\SetuDemo.csproj]
+C:\Users\iraje\source\repos\SetuDemo\Program.cs(33,58): error CS0117: 'ServerVersion' does not contain a definition for 'AutoDetect' [C:\Users\iraje\source\repos\SetuDemo\SetuDemo.csproj]
+C:\Users\iraje\source\repos\SetuDemo\Program.cs(33,17): error CS1061: 'DbContextOptionsBuilder' does not contain a definition for 'UseMySql' and no accessible extension method 'UseMySql' accepting a first argument of type 'DbContextOptionsBuilder' could be found (are you missing a using directive or an assembly reference?) [C:\Users\iraje\source\repos\SetuDemo\SetuDemo.csproj]
+    3 Warning(s)
+    2 Error(s)
+
+Time Elapsed 00:00:01.73
+
+Workload updates are available. Run `dotnet workload list` for more information.

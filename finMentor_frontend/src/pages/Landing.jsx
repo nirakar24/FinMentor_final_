@@ -57,7 +57,7 @@ const Landing = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-emerald-50 to-slate-50">
       {/* Hero Section */}
       <div className="relative overflow-hidden">
         {/* Animated background elements */}
@@ -114,7 +114,7 @@ const Landing = () => {
                 FinMentor
               </span>
             </h1>
-            
+
             <p className="text-xl text-slate-600 mb-8 max-w-3xl mx-auto">
               Your AI-powered financial coaching platform. Get personalized advice, track your
               finances, and make smarter money decisions with confidence.

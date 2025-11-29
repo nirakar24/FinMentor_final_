@@ -13,7 +13,7 @@ const AgentResponse = ({ response }) => {
       case 'low':
         return 'border-success-500 bg-success-50';
       default:
-        return 'border-primary-500 bg-primary-50';
+        return 'border-emerald-500 bg-emerald-50';
     }
   };
 
@@ -26,7 +26,7 @@ const AgentResponse = ({ response }) => {
       case 'low':
         return 'badge-success';
       default:
-        return 'badge-info';
+        return 'bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full text-xs font-semibold inline-block';
     }
   };
 
@@ -38,17 +38,17 @@ const AgentResponse = ({ response }) => {
       className="space-y-6"
     >
       {/* AI Answer Card */}
-      <div className="card bg-gradient-to-br from-primary-50 to-primary-100 border-2 border-primary-300">
+      <div className="card bg-gradient-to-br from-emerald-50 to-teal-50 border-2 border-emerald-200 shadow-lg shadow-emerald-900/5">
         <div className="flex items-start gap-4">
-          <div className="w-12 h-12 bg-gradient-to-br from-primary-600 to-primary-500 rounded-lg flex items-center justify-center flex-shrink-0">
+          <div className="w-12 h-12 bg-gradient-to-br from-emerald-600 to-teal-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-md shadow-emerald-600/20">
             <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
             </svg>
           </div>
           <div className="flex-1">
-            <h3 className="text-xl font-bold text-primary-900 mb-3 flex items-center gap-2">
+            <h3 className="text-xl font-bold text-emerald-900 mb-3 flex items-center gap-2">
               AI Financial Advice
-              <span className="text-xs font-normal text-primary-700 bg-primary-200 px-2 py-1 rounded">
+              <span className="text-xs font-normal text-emerald-700 bg-emerald-100 border border-emerald-200 px-2 py-1 rounded-md">
                 Powered by LangGraph
               </span>
             </h3>
@@ -65,7 +65,7 @@ const AgentResponse = ({ response }) => {
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.2 }}
-          className="card"
+          className="card border border-slate-100 shadow-md"
         >
           <h4 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
             <svg className="w-5 h-5 text-danger-600" fill="currentColor" viewBox="0 0 20 20">
@@ -95,7 +95,7 @@ const AgentResponse = ({ response }) => {
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.3 }}
-          className="card"
+          className="card border border-slate-100 shadow-md"
         >
           <h4 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
             <svg className="w-5 h-5 text-warning-600" fill="currentColor" viewBox="0 0 20 20">
@@ -125,7 +125,7 @@ const AgentResponse = ({ response }) => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="card"
+          className="card border border-slate-100 shadow-md"
         >
           <h4 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
             <svg className="w-5 h-5 text-success-600" fill="currentColor" viewBox="0 0 20 20">
@@ -155,7 +155,7 @@ const AgentResponse = ({ response }) => {
                   <div className="flex-shrink-0">
                     <input
                       type="checkbox"
-                      className="w-5 h-5 text-primary-600 border-2 border-slate-300 rounded focus:ring-2 focus:ring-primary-500 cursor-pointer"
+                      className="w-5 h-5 text-emerald-600 border-2 border-slate-300 rounded focus:ring-2 focus:ring-emerald-500 cursor-pointer"
                     />
                   </div>
                 </div>

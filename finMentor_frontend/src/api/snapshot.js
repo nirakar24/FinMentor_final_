@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = 'http://localhost:8000';
+const BASE_URL = 'http://localhost:8001';
 
 const api = axios.create({
   baseURL: BASE_URL,
@@ -13,10 +13,10 @@ export const getUserSnapshot = async (userId) => {
   try {
     const response = await api.get(`/snapshot/${userId}`);
     const data = response.data;
-    
+
     // Handle both direct snapshot and nested snapshot response
     const snapshot = data.snapshot || data;
-    
+
     return {
       user_id: snapshot.user_id,
       profile: snapshot.profile,
