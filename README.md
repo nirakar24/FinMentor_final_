@@ -4,6 +4,10 @@ This project implements a **hybrid Rule-Based + Agentic AI system** for generati
 
 ---
 
+
+![WhatsApp Image 2025-11-29 at 11 28 50_b86ed624](https://github.com/user-attachments/assets/dc6281e5-1598-4644-90e5-5adb717ced59)
+
+
 ## 1. What We Built
 
 - A **custom rule-based decision engine** for financial risk detection
